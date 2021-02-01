@@ -129,10 +129,10 @@ export default {
 
             //проверка номинала
 
-            if (this.value % this.valutes[this.code].Nominal) {
-                alert(`Введите другое количество. \nНоминал валюты: ${ this.valutes[this.code].Nominal}`); 
-                return;
-            }
+            // if (this.value % this.valutes[this.code].Nominal) {
+            //     alert(`Введите другое количество. \nНоминал валюты: ${ this.valutes[this.code].Nominal}`); 
+            //     return;
+            // }
 
             // проверка достаточности средств
             if (this.operationBuy) {
