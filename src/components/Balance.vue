@@ -8,7 +8,7 @@
         <table>
           <tbody>
             <tr
-              v-for="(value,code) in balance"
+              v-for="(value, code) in balance"
               :key='code'
             >
               <td >{{ code }}</td>

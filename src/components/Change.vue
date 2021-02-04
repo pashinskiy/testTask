@@ -1,44 +1,48 @@
 <template>
   <form @submit.prevent="submit">
-    <h2 class="secondary">Валюта</h2>
-    
-    <Select
-        @choiceValute='choiceValute'
-    />
+        <h2 class="secondary">Валюта</h2>
+        
+        <Select
+            @choiceValute='choiceValute'
+        />
 
-    <h2 class="secondary">Доступно</h2>
-    <p class="big_f">
-        {{ form_00(have) }} {{ code }}
-    </p>
+        <h2 class="secondary">Доступно</h2>
+        <p class="big_f">
+            {{ form_00(have) }} {{ code }}
+        </p>
 
-    <h2 class="secondary">Хочу</h2>
+        <h2 class="secondary">Хочу</h2>
 
-    <div 
-        @click="operationBuy = true"
-        :class="`btn p_8_16 ${classBuy}`"
-    >
-        Купить
-    </div>
-    <div 
-        @click="operationBuy = false"
-        :class="`btn p_8_16 ${classSell}`"
-    >
-        Продать
-    </div>
+        <div 
+            @click="operationBuy = true"
+            :class="{'active': operationBuy}"
+            class="btn p_8_16"
+        >
+            Купить
+        </div>
+        <div 
+            @click="operationBuy = false"
+            :class="{'active': !operationBuy}"
+            class="btn p_8_16"
+        >
+            Продать
+        </div>
 
-    <input 
-        @input="onInput"
-        :value="value"
-        class="p_8_16" 
-        placeholder="0.000"
-    />
+        <input 
+            @input="onInput"
+            :value="value"
+            class="p_8_16" 
+            placeholder="0.000"
+        />
 
-    <h2 class="secondary">Заплачу</h2>
-    <p class="big_f">
-        {{ form_00(summ) }} ₽
-    </p>
+        <h2 class="secondary">Заплачу</h2>
+        <p class="big_f">
+            {{ form_00(summ) }} ₽
+        </p>
 
-    <button class="btn submit p_8_16">{{ operation }}</button>
+        <button class="btn submit p_8_16">
+            {{ operationBuy ? 'Купить' : 'Продать' }}
+        </button>
   </form>
 </template>
 
@@ -63,9 +67,8 @@ export default {
             'valutes',
             'valBalance'
         ]),
-        have(){
-            let value = this.valBalance(this.code);
-            return value;
+        have(){      
+            return this.valBalance(this.code);
         },
         summ(){
             let summ = 0;
@@ -73,19 +76,8 @@ export default {
             if (this.operationBuy && this.code) {
                 summ = this.value/this.valutes[this.code].Nominal*this.valutes[this.code].Value;
             }
-            return summ;
-        },
-        
 
-        //классы и настройки html элементов
-        operation(){
-            return this.operationBuy ? 'Купить' : 'Продать';
-        },
-        classBuy(){
-            return this.operationBuy ? 'active' : '';
-        },
-        classSell(){
-            return this.operationBuy ? '' : 'active';
+            return summ;
         },
     },
     methods: {
@@ -96,7 +88,7 @@ export default {
             this.code = code;
         },
         form_00(value) {
-            return (Math.trunc(value*100)/100).toFixed(2);
+            return ( Math.trunc(value * 100) / 100 ).toFixed(2);
         },
         //обработка input
         onInput(e){
@@ -114,9 +106,10 @@ export default {
             }
 
             this.value = this.form_00(this.value);
-            setTimeout(() => {
-                e.target.setSelectionRange(this.posInput,this.posInput);
-            }, 0);
+
+            this.$nextTick( () => {
+                e.target.setSelectionRange(this.posInput, this.posInput);
+            });
         },
 
         //обработка submit
@@ -130,7 +123,7 @@ export default {
             //проверка номинала
 
             if (this.value % this.valutes[this.code].Nominal) {
-                alert(`Введите другое количество. \nНоминал валюты: ${ this.valutes[this.code].Nominal}`); 
+                alert(`Введите другое количество. \nНоминал валюты: ${this.valutes[this.code].Nominal}`); 
                 return;
             }
 
@@ -157,7 +150,8 @@ export default {
 
                 this.changeBalans({
                     inCode: 'RUR',
-                    inValue: this.value/this.valutes[this.code].Nominal*this.valutes[this.code].Value,
+                    inValue: this.value / this.valutes[this.code].Nominal 
+                    * this.valutes[this.code].Value,
                     outCode: this.code,
                     outValue: +this.value,
                 });                
